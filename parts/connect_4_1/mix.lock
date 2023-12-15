@@ -1,3 +1,0 @@
-%{
-  "patch": {:hex, :patch, "0.12.0", "2da8967d382bade20344a3e89d618bfba563b12d4ac93955468e830777f816b0", [:mix], [], "hexpm", "ffd0e9a7f2ad5054f37af84067ee88b1ad337308a1cb227e181e3967127b0235"},
-}
