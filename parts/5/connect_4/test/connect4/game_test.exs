@@ -4,7 +4,7 @@ defmodule Connect4.GameTest do
   test "create" do
     player = %{name: "Player 1", symbol: "X"}
     name = "Game 1"
-    settings = %{board: %{cols: 7, rows: 6}, win_condition: 4}
+    settings = %{board: %{cols: 7, rows: 6}}
 
     expected_board = [
       [nil, nil, nil, nil, nil, nil, nil],
@@ -17,6 +17,28 @@ defmodule Connect4.GameTest do
 
     assert %{board: ^expected_board, status: :lobby} =
              Connect4.Game.create(player, name, settings)
+  end
+
+  test "create with cols and rows settings negative value" do
+    player = %{name: "Player 1", symbol: "X"}
+    name = "Game 1"
+    settings = %{board: %{cols: -42, rows: -42}}
+
+    %{board: board, settings: %{board: %{cols: cols, rows: rows}}, status: :lobby} =
+      Connect4.Game.create(player, name, settings)
+
+    assert cols == 7 and rows == 6
+  end
+
+  test "create with easter eggs" do
+    player = %{name: "Player 1", symbol: "X"}
+    name = "Game 1"
+    settings = %{board: %{cols: 42, rows: 42}}
+
+    %{board: board, settings: %{board: %{cols: cols, rows: rows}}, status: :lobby} =
+      Connect4.Game.create(player, name, settings)
+
+    assert cols > 0 and cols <= 20 and rows > 0 and rows <= 20
   end
 
   test "start" do
@@ -38,7 +60,7 @@ defmodule Connect4.GameTest do
   test "move" do
     game = %{
       board: [[nil, nil, nil], [nil, nil, nil], [nil, nil, nil]],
-      settings: %{board: %{cols: 3, rows: 3}, winning_length: 3}
+      settings: %{board: %{cols: 3, rows: 3}}
     }
 
     player = %{symbol: "X"}
@@ -56,7 +78,7 @@ defmodule Connect4.GameTest do
   test "move with wrong column index" do
     game = %{
       board: [[nil, nil, nil], [nil, nil, nil], [nil, nil, nil]],
-      settings: %{board: %{cols: 3, rows: 3}, winning_length: 3}
+      settings: %{board: %{cols: 3, rows: 3}}
     }
 
     player = %{symbol: "X"}

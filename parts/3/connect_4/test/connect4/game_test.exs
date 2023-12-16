@@ -4,7 +4,7 @@ defmodule Connect4.GameTest do
   test "create" do
     player = %{name: "Player 1", symbol: "X"}
     name = "Game 1"
-    settings = %{board: %{cols: 7, rows: 6}, win_condition: 4}
+    settings = %{board: %{cols: 7, rows: 6}}
 
     expected_board = [
       [nil, nil, nil, nil, nil, nil, nil],
@@ -17,6 +17,17 @@ defmodule Connect4.GameTest do
 
     assert %{board: ^expected_board, status: :lobby} =
              Connect4.Game.create(player, name, settings)
+  end
+
+  test "create with easter eggs" do
+    player = %{name: "Player 1", symbol: "X"}
+    name = "Game 1"
+    settings = %{board: %{cols: 42, rows: 42}}
+
+    %{board: board, settings: %{board: %{cols: cols, rows: rows}}, status: :lobby} =
+      Connect4.Game.create(player, name, settings)
+
+    assert cols > 0 and cols <= 20 and rows > 0 and rows <= 20
   end
 
   test "start" do
@@ -33,19 +44,5 @@ defmodule Connect4.GameTest do
 
   test "stop with wrong status" do
     assert_raise FunctionClauseError, fn -> Connect4.Game.stop(%{status: nil}) end
-  end
-
-  test "move" do
-    game = %{board: [[nil, nil, nil], [nil, nil, nil], [nil, nil, nil]]}
-    player = %{symbol: "X"}
-    col_index = 0
-
-    expected_board = [
-      ["X", nil, nil],
-      [nil, nil, nil],
-      [nil, nil, nil]
-    ]
-
-    assert %{board: ^expected_board} = Connect4.Game.move(game, player, col_index)
   end
 end
