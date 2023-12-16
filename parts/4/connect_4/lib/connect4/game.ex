@@ -17,7 +17,8 @@ defmodule Connect4.Game do
     %{game | status: :game_over}
   end
 
-  def move(game, player, col_index) do
+  def move(game, player, col_index)
+      when 0 <= col_index and col_index < game.settings.board.cols do
     IO.puts("Make your move!")
 
     board = game.board
@@ -30,7 +31,7 @@ defmodule Connect4.Game do
     %{game | board: board}
   end
 
-  defp board_generate(cols, rows),
+  defp board_generate(cols, rows) when cols > 0 and rows > 0,
     do: Enum.map(1..rows, fn _ -> Enum.map(1..cols, fn _ -> nil end) end)
 
   defp board_find_row_index_from_col_index(board, col_index),
