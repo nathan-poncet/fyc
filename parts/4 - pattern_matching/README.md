@@ -1,4 +1,6 @@
 ## 4. Pattern Matching
 
-reference : 
+references:
 https://hexdocs.pm/elixir/1.16/pattern-matching.html
+- Match operator
+- Pattern matching
