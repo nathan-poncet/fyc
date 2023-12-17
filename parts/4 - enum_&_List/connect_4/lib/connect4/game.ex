@@ -36,19 +36,6 @@ defmodule Connect4.Game do
     %{game | board: board}
   end
 
-  defp board_generate(42, 42) do
-    IO.puts("""
-    Life, the Universe and Everything
-    You discovered the easter egg!
-    """)
-
-    random_cols = Enum.random(1..20)
-    random_rows = Enum.random(1..20)
-
-    {Enum.map(1..random_rows, fn _ -> Enum.map(1..random_cols, fn _ -> nil end) end), random_cols,
-     random_rows}
-  end
-
   defp board_generate(cols, rows),
     do: {Enum.map(1..rows, fn _ -> Enum.map(1..cols, fn _ -> nil end) end), cols, rows}
 
