@@ -1,5 +1,6 @@
 defmodule Connect4.GameTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case
+  doctest Connect4.Game
 
   test "create" do
     player = %{name: "Player 1", symbol: "X"}
@@ -64,10 +65,10 @@ defmodule Connect4.GameTest do
     }
 
     player = %{symbol: "X"}
-    col_index = 0
+    col_index = 1
 
     expected_board = [
-      ["X", nil, nil],
+      [nil, "X", nil],
       [nil, nil, nil],
       [nil, nil, nil]
     ]

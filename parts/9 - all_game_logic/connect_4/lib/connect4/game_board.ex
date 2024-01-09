@@ -1,54 +1,20 @@
-defmodule Connect4.Game do
-  def create(player, name, settings) do
-    %{board: %{cols: cols, rows: rows}} = settings
+defmodule Connect4.GameBoard do
+  @moduledoc """
+  This module contains the game board logic.
+  """
 
-    {board, cols, rows} = board_generate(cols, rows)
+  @doc """
+  Generates a board with the given number of columns and rows.
 
-    %{
-      name: name,
-      board: board,
-      players: [player],
-      settings: %{settings | board: %{settings.board | cols: cols, rows: rows}},
-      status: :lobby
-    }
-  end
+  ## Examples
 
-  def start(%{status: :lobby} = game) do
-    IO.puts("Let's play! Connect 4!")
-    %{game | status: :playing}
-  end
-
-  def stop(%{status: :playing} = game) do
-    IO.puts("Thanks for playing!")
-    %{game | status: :game_over}
-  end
-
-  def move(game, player, col_index)
-      when 0 <= col_index and col_index < game.settings.board.cols do
-    IO.puts("Make your move!")
-
-    board = game.board
-
-    # Try to find the first empty cell in the column
-    row_index = board_find_row_index_from_col_index(board, col_index)
-
-    board = board_put_piece(board, col_index, row_index, player.symbol)
-
-    case {board_win(board, game.settings, %{x: col_index, y: row_index}), board_is_full?(board)} do
-      {true, _} ->
-        IO.puts("You win!")
-        %{game | board: board, status: :game_over}
-
-      {_, true} ->
-        IO.puts("It's a draw!")
-        %{game | board: board, status: :game_over}
-
-      _ ->
-        %{game | board: board}
-    end
-  end
-
-  defp board_generate(42, 42) do
+  iex> Connect4.GameBoard.board_generate(3, 2)
+  {[
+    [nil, nil, nil],
+    [nil, nil, nil]
+  ], 3, 2}
+  """
+  def board_generate(42, 42) do
     IO.puts("""
     Life, the Universe and Everything
     You discovered the easter egg!
@@ -61,25 +27,79 @@ defmodule Connect4.Game do
      random_rows}
   end
 
-  defp board_generate(cols, rows) when cols > 0 and rows > 0,
+  def board_generate(cols, rows) when cols > 0 and rows > 0,
     do: {Enum.map(1..rows, fn _ -> Enum.map(1..cols, fn _ -> nil end) end), cols, rows}
 
-  defp board_generate(_, _),
+  def board_generate(_, _),
     do: {Enum.map(1..6, fn _ -> Enum.map(1..7, fn _ -> nil end) end), 7, 6}
 
-  defp board_find_row_index_from_col_index(board, col_index),
+  @doc """
+  Finds the first empty cell in the given column.
+
+  ## Examples
+
+  iex> Connect4.GameBoard.board_find_row_index_from_col_index([
+  ...>   [nil, "X", nil],
+  ...>   [nil, "X", nil],
+  ...>   [nil, nil, nil]
+  ...> ], 1)
+  2
+  """
+  def board_find_row_index_from_col_index(board, col_index),
     do: Enum.find_index(board, fn row -> Enum.at(row, col_index) == nil end)
 
-  defp board_put_piece(board, row_index, col_index, piece) do
+  @doc """
+  Puts a piece in the given position.
+
+  ## Examples
+
+  iex> Connect4.GameBoard.board_put_piece([
+  ...>   [nil, nil, nil],
+  ...>   [nil, nil, nil],
+  ...>   [nil, nil, nil]
+  ...> ], 1, 1, "X")
+  [
+    [nil, nil, nil],
+    [nil, "X", nil],
+    [nil, nil, nil]
+  ]
+  """
+  def board_put_piece(board, row_index, col_index, piece) do
     List.update_at(board, row_index, fn row ->
       List.update_at(row, col_index, fn _ -> piece end)
     end)
   end
 
-  defp board_win(board, settings, pos) do
+  @doc """
+  Checks if the given board has a winning sequence.
+
+  ## Examples
+
+  iex> Connect4.GameBoard.board_win([
+  ...>   ["X", "X", "X", "X", nil],
+  ...>   [nil, nil, nil, nil, nil]
+  ...> ], %{board: %{cols: 6, rows: 5}, winning_length: 4}, %{x: 0, y: 0})
+  true
+  """
+  def board_win(board, settings, pos) do
     board_win_horizontal?(board, settings, pos) or
       board_win_vertical?(board, settings, pos) or
       board_win_diagonal?(board, settings, pos)
+  end
+
+  @doc """
+  Checks if the given board is full.
+
+  ## Examples
+
+  iex> Connect4.GameBoard.board_is_full?([
+  ...>   ["X", "X", "X"],
+  ...>   ["X", "X", "X"]
+  ...> ])
+  true
+  """
+  def board_is_full?(board) do
+    Enum.all?(board, fn row -> Enum.all?(row, fn cell -> cell != nil end) end)
   end
 
   defp board_win_horizontal?(board, settings, pos) do
@@ -145,9 +165,5 @@ defmodule Connect4.Game do
     |> Enum.chunk_by(& &1)
     |> Enum.filter(fn chunk -> !Enum.any?(chunk, &(&1 == nil)) end)
     |> Enum.any?(fn chunk -> length(chunk) >= winning_length end)
-  end
-
-  defp board_is_full?(board) do
-    Enum.all?(board, fn row -> Enum.all?(row, fn cell -> cell != nil end) end)
   end
 end
